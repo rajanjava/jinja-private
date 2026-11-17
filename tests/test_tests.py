@@ -1,6 +1,7 @@
 import pytest
 from markupsafe import Markup
 
+from jinja2 import ChainableUndefined
 from jinja2 import Environment
 from jinja2 import TemplateAssertionError
 from jinja2 import TemplateRuntimeError
@@ -167,6 +168,14 @@ class TestTestsCase:
         env = Environment(autoescape=True)
         tmpl = env.from_string("{{ x is escaped }}|{{ y is escaped }}")
         assert tmpl.render(x="foo", y=Markup("foo")) == "False|True"
+
+    def test_escaped_chainable_undefined(self):
+        env = Environment(undefined=ChainableUndefined, autoescape=True)
+        tmpl = env.from_string(
+            "{{ x.y is escaped }}|{{ x is escaped }}|{{ y is escaped }}"
+        )
+        assert tmpl.render(y=Markup("foo")) == "False|False|True"
+
 
     def test_greaterthan(self, env):
         tmpl = env.from_string("{{ 1 is greaterthan 0 }}|{{ 0 is greaterthan 1 }}")

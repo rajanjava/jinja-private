@@ -985,9 +985,6 @@ class ChainableUndefined(Undefined):
 
     __slots__ = ()
 
-    def __html__(self) -> str:
-        return str(self)
-
     def __getattr__(self, name: str) -> "ChainableUndefined":
         # Raise AttributeError on requests for names that appear to be unimplemented
         # dunder methods to avoid confusing Python with truthy non-method objects that

@@ -202,7 +202,8 @@ def test_iterable(value: t.Any) -> bool:
 
 def test_escaped(value: t.Any) -> bool:
     """Check if the value is escaped."""
-    return hasattr(value, "__html__")
+    return hasattr(value, "__html__") and not isinstance(value, Undefined)
+
 
 
 def test_in(value: t.Any, seq: t.Container[t.Any]) -> bool:
