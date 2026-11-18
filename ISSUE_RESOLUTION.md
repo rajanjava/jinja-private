@@ -8,7 +8,7 @@
 
 ---
 
-## 2. Root Cause Analysis
+## 2. Problem Description & Root Cause Analysis
 1. `ChainableUndefined` defined a custom method:
    ```python
    def __html__(self) -> str:
@@ -45,6 +45,11 @@ E         + True|True|True
 ```
 
 ---
+
+## Solution Approach
+1. **Inspect `is escaped` Contract:** Jinja's `test_escaped` checks `hasattr(value, "__html__")`. Because `ChainableUndefined` inherited or defined `__html__`, undefined values falsely passed `is escaped`, breaking template conditional guards.
+2. **Fix at Both Definition and Test Layer:** Removed the misleading `__html__` method from `ChainableUndefined` and added an explicit `not isinstance(value, Undefined)` guard in `test_escaped`, guaranteeing no `Undefined` subclass can ever masquerade as safe escaped HTML.
+3. **TDD & Regression Safety:** Added `test_escaped_chainable_undefined` in `tests/test_tests.py` covering both direct undefined variables and chained attribute accesses (`obj.missing is escaped`).
 
 ## 4. Implementation Diff
 ```diff
